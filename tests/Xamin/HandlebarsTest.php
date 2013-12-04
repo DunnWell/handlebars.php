@@ -112,6 +112,11 @@ class HandlebarsTest extends \PHPUnit_Framework_TestCase
                 '1234'
             ),
             array(
+                '{{#each data}}{{this}}{{/each}}',
+                array('data' => new ArrayObject(array(1, 2, 3, 4))),
+                '1234'
+            ),
+            array(
                 '{{#unless data}}ok{{/unless}}',
                 array('data' => true),
                 ''
