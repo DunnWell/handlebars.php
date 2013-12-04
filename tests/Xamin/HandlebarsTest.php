@@ -161,6 +161,20 @@ class HandlebarsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Both block helpers and inline helpers can take multiple arguments
+     */
+    public function testHelperMultipleArgs()
+    {
+        $loader = new \Handlebars\Loader\StringLoader();
+        $engine = new \Handlebars\Handlebars(array('loader' => $loader));
+        $engine->addHelper('test', function ($template, $context, $args, $source) {
+            return 'Params: ' . $args;
+        });
+        $this->assertEquals('Params: item foo=bar "literal"', $engine->render('{{#test item foo=bar "literal"}}', array('item' => 'value')));
+        $this->assertEquals('Params: item foo=bar "literal"', $engine->render('{{test item foo=bar "literal"}}', array('item' => 'value')));
+    }
+
+    /**
      * @param $dir
      *
      * @return bool

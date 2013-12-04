@@ -254,10 +254,14 @@ class Template
             } else {
                 $source = '';
             }
+            $args = isset($current[Tokenizer::ARGS]) ? $current[Tokenizer::ARGS] : '';
+            if (is_array($args)) {
+                $args = implode(' ', $args);
+            }
             $params = array(
                 $this, //First argument is this template
                 $context, //Second is current context
-                isset($current[Tokenizer::ARGS]) ? $current[Tokenizer::ARGS] : '', //Arguments
+                $args, //Arguments string
                 $source
             );
 
