@@ -136,6 +136,7 @@ class Template
         }
         $topTree = end($this->_stack); // never pop a value from stack
         list($index, $tree, $stop) = $topTree;
+        $helpers = $this->handlebars->getHelpers();
 
         $buffer = '';
         while (array_key_exists($index, $tree)) {
@@ -172,10 +173,12 @@ class Template
                 break;
             case Tokenizer::T_UNESCAPED:
             case Tokenizer::T_UNESCAPED_2:
-                $buffer .= $this->_variables($context, $current, false);
-                break;
             case Tokenizer::T_ESCAPED:
-                $buffer .= $this->_variables($context, $current, true);
+                if ($helpers->has($current[Tokenizer::NAME])) {
+                    $buffer .= $this->_section($context, $current);
+                } else {
+                    $buffer .= $this->_variables($context, $current, $current[Tokenizer::TYPE] === Tokenizer::T_ESCAPED);
+                }
                 break;
             case Tokenizer::T_TEXT:
                 $buffer .= $current[Tokenizer::VALUE];
@@ -254,7 +257,7 @@ class Template
             $params = array(
                 $this, //First argument is this template
                 $context, //Second is current context
-                $current[Tokenizer::ARGS], //Arguments
+                isset($current[Tokenizer::ARGS]) ? $current[Tokenizer::ARGS] : '', //Arguments
                 $source
             );
 
